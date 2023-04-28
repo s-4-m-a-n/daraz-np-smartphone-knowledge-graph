@@ -10,9 +10,16 @@ import difflib
 import re
 import random
 # my package
-from src.utils import save_json
+import src.utils as utils
 from src.logger import logging
+from src.exception import CustomException
+import sys
+import os
 
+
+config = utils.load_json("src/config.json")
+ARTIFACT_ROOT_DIR = config['ARTIFACT_ROOT_DIR']
+SCRAPER_ARTIFACT = os.path.join(ARTIFACT_ROOT_DIR, config['SCRAPER_ARTIFACT'])
 
 # =====product listing page scraper =====================
 
@@ -146,7 +153,7 @@ def scrape_single_page(url):
     
     # scrap data from detail page and update product
 
-    for count, product in enumerate(products_data):
+    for product in products_data:
         logging.info("scraping detail page : {}".format(product['url']))
         product_detail_data = {
             'details': scrape_product_details(product['url'])
@@ -188,6 +195,7 @@ def scrape_json_segment(url, pattern):
     responses = json.loads(response_json_string)
     return responses
 
+
 def parse_skubase_properties(skubase_properties):
     result = {}
     for prop in skubase_properties:
@@ -197,16 +205,19 @@ def parse_skubase_properties(skubase_properties):
         })
     return result
 
+
 def parse_product_prices(skuinfos):
     result = {}
     for sku_id, prod in skuinfos.items():
         result[sku_id] = prod['price']
     return result
 
+
 def str_to_tuple(string):
     items = string.split(';')
     tuples = tuple([item.split(':') for item in items])
     return tuples
+
 
 def create_mapper(sku_list):
     mapper ={}
@@ -216,11 +227,13 @@ def create_mapper(sku_list):
             mapper[key] = str_to_tuple(sku['propPath'])
     return mapper
 
+
 def search_value(values, key):
     for value in values:
         if value['vid'] == key:
             return value['vname']
     return None
+
 
 def prepare_prop_and_price(mapper, prices, props):
     result = []
@@ -233,6 +246,7 @@ def prepare_prop_and_price(mapper, prices, props):
         result.append(temp)
     return result
 
+
 def scrape_product_details(url):
     pattern = "app.run\((.*)\)" 
     product_details = {}
@@ -240,7 +254,9 @@ def scrape_product_details(url):
         product_json = scrape_json_segment(url, pattern)
         product_field = product_json['data']['root']['fields']
         product_details = list(product_field['specifications'].values())[0]['features']
-        product_props = parse_skubase_properties(product_field['productOption']['skuBase']['properties'])
+        product_props = parse_skubase_properties(
+                            product_field['productOption']['skuBase']['properties']
+                            )
         #extract prices
         product_prices = parse_product_prices(product_field['skuInfos'])
 
@@ -274,23 +290,22 @@ def create_session():
         "Accept-Encoding": "gzip, deflate, br",
         "Referer": "https://www.daraz.com.np/smartphones/?page=1",
         "Content-Type": "application/json",
-        "Sec-Fetch-Dest": "empty",
-        "Sec-Fetch-Mode": "cors",
-        "Sec-Fetch-Site": "same-origin",
         "Connection": "keep-alive",
-        "Cookie": "lzd_cid=c6029f3e-cd34-4e19-f1af-195ba8552605; t_uid=c6029f3e-cd34-4e19-f1af-195ba8552605; lwrid=AQGHdIR43CSKAbpxFknue1x29BP7; isg=BMrKo5KNmkMilRaf4_hik5lGGLlsu04VSN5_WVQDRZ3zB2vBPE6VJDNxF-vb7Mat; tfstk=cWn1BFsoR8VU1VNFl59EAzE-_MrVZYB7hFNiCCkVmqWRboMCi2jzNl3rosE4HJ1..; l=fBjBW6RgNM3LG-86BOfChurza779vIObYuPzaNbMi9fP_eCHIbfPW1NreaYMCn6NEsSXR3z5ep8DBzLuNy4kh2XDzYYZz2cQwdTHR3zQR; hng=NP|en-NP|NPR|524; userLanguageML=en-NP; _m_h5_tk=58e9589aff41803753c08c2392b19999_1682333935682; _m_h5_tk_enc=ba5a8e115d951a63f72222597f7f8430; _bl_uid=IhlR8gFFdz9eaRwakpI6qdmjdjjp; t_fv=1681297233353; cna=UX29HM3HX0MCAaM1GZsMHaMi; _gcl_au=1.1.79659918.1681297234; _ga=GA1.3.1396419356.1681297234; _ga_GEHLHHEXPG=GS1.1.1682326015.23.1.1682330163.0.0.0; cto_bundle=a8k4hV9jSWJXQzNDOEw0Yk1lMmhRTTclMkZOd1pTdElSViUyRmJhY2lrJTJGeVpYWGl2T2o3QmtFTWY1UWRZJTJGMCUyRm52UWswRFp3ZjU3OVdPVG96S1JNcU9NcHdyNHJBdWRGWGtaJTJCY0ttJTJGMnlPSFNXdE5qM0NHY25wbGx4cSUyQklpTmNvJTJCcSUyQlA4RXV0; lzd_sid=1053f79ea4b910990924e27056588160; _tb_token_=3e1e75d3e1e8b; curTraffic=lazada; JSESSIONID=719417B681AD0844501825EC7DE0D0B0; XSRF-TOKEN=b017b01c-a727-47dd-a4a6-e898ab83ef35; xlly_s=1; _gid=GA1.3.1018908048.1682304506; t_sid=Fb6ybTl96hGc0nwHfNk2osaic3cUcPWa; utm_channel=NA; daraz-marketing-tracker=hide; _gat_UA-98188874-1=1",
-        "TE": "trailers"
+        "Cookie": "lzd_cid=c6029f3e-cd34-4e19-f1af-195ba8552605; t_uid=c6029f3e-cd34-4e19-f1af-195ba8552605; lwrid=AQGHdIR43CSKAbpxFknue1x29BP7; isg=BB4ep0AE9gK4KiIbn5x-T81qbL1g3-JZfEIr3cinh2AU67zFMGo6aGDJ429nSNpx; tfstk=cH9CBu2D1ibNRB_aNwiwCce7RNWPaeqfVX_HA2WXy2fxbj-CJsj03Z6pgQ4RUgI1.; l=fBjBW6RgNM3LGG0kBOfZPurza77OsIO4YuPzaNbMi9fPO_ChFmkOW1NgEaLMCn6NEsWDR3z5ep8DBzYugy4odxv9-eTZz2cIndLHR3zQR; hng=NP|en-NP|NPR|524; userLanguageML=en-NP; _m_h5_tk=c5b8e00ff26dfb9fdeb2454aca85e74a_1682654421659; _m_h5_tk_enc=fa14c9d81aca2dc46ecf9e7351469e29; _bl_uid=IhlR8gFFdz9eaRwakpI6qdmjdjjp; t_fv=1681297233353; cna=UX29HM3HX0MCAaM1GZsMHaMi; _gcl_au=1.1.79659918.1681297234; _ga=GA1.3.1396419356.1681297234; _ga_GEHLHHEXPG=GS1.1.1682643981.25.1.1682644001.0.0.0; cto_bundle=bMKZlF9iMWVmN0pOOHJuNTVCN1V2UGtrblVHc3E2czJkYXFzZW5vQVRnRndDWUZkVjlRNkw4NzY2TyUyQlBBN0t3Wm9URGlIcU80MmY0NXJBZUJpTTVPRFN6VGJheGM1WjB1dUdhbTlGV1lnVXYzMkd3RlpqdXlqbUlUcWY1dGZocjlaQnZI; lzd_sid=1053f79ea4b910990924e27056588160; _tb_token_=3e1e75d3e1e8b; curTraffic=lazada; JSESSIONID=B62A5E200308D168B0A82F138B1508FB; XSRF-TOKEN=b017b01c-a727-47dd-a4a6-e898ab83ef35; t_sid=7c4lCvxM8olu2S1VfgGYNBF0sZOsycJt; utm_channel=NA; daraz-marketing-tracker=hide; _gid=GA1.3.2108839859.1682643982; _gat_UA-98188874-1=1; xlly_s=1",
+        "TE": "trailers",
+        "Cache-Control": "no-cache"
     }
+    
     session.headers.update(headers)
     
-    retry = Retry(connect=4, backoff_factor=0.5)
+    retry = Retry(connect=2, backoff_factor=0.5)
     adapter = HTTPAdapter(max_retries=retry)
     session.mount('http://', adapter)
     session.mount('https://', adapter)
     
     return session
 
-def scrape_multi_page(f_url, last_page, concurrency=True, shuffle=True):
+def scrape_multi_page(f_url, last_page, concurrency=True, shuffle=False):
     '''
         it takes f_url to and last_page to prepare url_lists, those url will be scraped
         
@@ -329,14 +344,18 @@ def scrape_multi_page(f_url, last_page, concurrency=True, shuffle=True):
 def run():
     f_url = "https://www.daraz.com.np/smartphones/?ajax=true&page={}"
     last_page = 5
-    responses = scrape_multi_page(f_url, last_page)
-    responses = list(responses)
+    try:
+        responses = scrape_multi_page(f_url, last_page)
+        responses = list(responses)
+    except Exception as e:
+        raise utils.CustomException(f"unable to scrap data | {e} ", sys)
 
     # save the file
     try:
-        utils.save_json(responses, "artifacts/scraped_data.json")
+        os.makedirs(ARTIFACT_ROOT_DIR, exist_ok=True)
+        utils.save_json(responses, SCRAPER_ARTIFACT)
     except Exception as e:
-        raise utils.exception.CustomException("unable to save file", sys)
+        raise CustomException("unable to save file", sys)
 
 
 if __name__ == "__main__":

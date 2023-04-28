@@ -3,7 +3,7 @@ import src.utils as utils
 import pandas as pd
 import re
 from tqdm import tqdm
-
+import os
 
 
 COLUMNS=['name','rating', 'review','url', 'brand_id',
@@ -18,6 +18,11 @@ DETAIL_FIELD = ['Brand', 'Number Of Cameras','Model Year',
 eng_to_np = {'Color Family': 'रंग परिवार', 
              'RAM Memory': 'र्याम मेमोरी',
              'Storage Capacity': 'भण्डारण क्षमता'}
+
+config = utils.load_json("src/config.json")
+ARTIFACT_ROOT_DIR = config['ARTIFACT_ROOT_DIR']
+SCRAPER_ARTIFACT = os.path.join(ARTIFACT_ROOT_DIR, config['SCRAPER_ARTIFACT'])
+DATA_TRANS_ARTIFACT = os.path.join(ARTIFACT_ROOT_DIR, config['DATA_TRANS_ARTIFACT'])
 
 
 def extract_product_name(raw_name):
@@ -93,7 +98,7 @@ def create_dataframe(json_data, columns, detail_field, eng_to_np):
 def run():
     # load data
     logging.info("loading scraped data")
-    json_data = utils.load_json("artifacts/scraped_data.json")
+    json_data = utils.load_json(SCRAPER_ARTIFACT)
 
     # transform json to dataframe
     logging.info("transorming json into a dataframe")
@@ -101,7 +106,7 @@ def run():
 
     # save dataframe
     logging.info("saving transformed dataframe ")
-    df.to_csv("artifacts/processed_data.csv")
+    df.to_csv(DATA_TRANS_ARTIFACT)
 
 
 if __name__ == "__main__":

@@ -1,11 +1,15 @@
 import src.utils as utils
 from src.logger import logging
 from tqdm import tqdm
+import os
 
+URL = os.getenv("URL")
+AUTH = (os.getenv("AUTH_USER"), os.getenv("AUTH_PASS"))
 
-URL = "bolt://localhost:7687"
-AUTH = ("neo4j", "123456789")
-CSV_FILE_PATH = "artifacts/processed_data.csv"
+config = utils.load_json("src/config.json")
+# ARTIFACT_FILE_PATH = "artifacts/processed_data.csv"
+ARTIFACT_FILE_PATH = os.path.join(config['ARTIFACT_ROOT_DIR'], config['DATA_TRANS_ARTIFACT'])
+
 
 def clean_label(label):
     token = label.split("(")
@@ -33,7 +37,7 @@ def db_insert(src, trg, relationship, session):
     session.run(cypher, node1=src, node2=trg, rel=relationship)
 
 
-def transformer():
+def run():
     logging.disable(logging.DEBUG)
     # establish connection to the database
     logging.info("establishing connection to neo4j")
@@ -47,8 +51,8 @@ def transformer():
         return None
     
     # load csv 
-    logging.info("loading processed data")
-    df = utils.load_csv(CSV_FILE_PATH)
+    logging.info("fetching processed data")
+    df = utils.load_csv(ARTIFACT_FILE_PATH)
 
     # loading database
     logging.info("loading processed data to neo4j")
@@ -108,4 +112,4 @@ def transformer():
 
 
 if __name__ == "__main__":
-    transformer()
+    run()

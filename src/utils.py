@@ -6,7 +6,7 @@ import pandas as pd
 
 
 def save_json(json_obj, file_path):
-    with open("daraz_scraped_data_v3.json", "w") as f:
+    with open(file_path, "w") as f:
         json.dump(json_obj, f)
 
 def load_json(file_path):
