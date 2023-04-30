@@ -161,3 +161,6 @@ cython_debug/
 
 artifacts/*
 archives/
+artifacts_/
+
+requirements_.txt

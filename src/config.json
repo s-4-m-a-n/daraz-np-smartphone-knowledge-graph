@@ -1,5 +1,5 @@
 {
     "ARTIFACT_ROOT_DIR" : "./artifacts",
-    "SCRAPER_ARTIFACT": "daraz_scraped_data.json",
+    "SCRAPER_ARTIFACT": "scraped_data.json",
     "DATA_TRANS_ARTIFACT": "processed_data.csv"
 }
