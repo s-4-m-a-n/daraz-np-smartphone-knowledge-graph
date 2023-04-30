@@ -2,6 +2,7 @@ from src.pipeline import KG_builder_pipeline
 import click
 import ast
 
+
 class PythonLiteralOption(click.Option):
     def type_cast_value(self, ctx, value):
         try:
