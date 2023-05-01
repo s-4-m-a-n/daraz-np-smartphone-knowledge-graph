@@ -17,7 +17,7 @@ services:
     build: .
     container_name: cli_app
     links: 
-      - neo4j_db
+      - neo4j
     volumes:
       - .:/app
     env_file:

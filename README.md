@@ -70,15 +70,12 @@ To get started with this project, follow these steps:
 		- It is not mandatory to add all three components, if you already have scraped data into the artifact/ directory, then you can simply ignore scraper components by specifying only the "transformer" and "kg_builder" component.
 		
 7. run neo4j-browser to perform queries
-	
-	>visit http://localhost:7474 
+	>visit http://localhost:7474/
 
-## Usage
 
-## Contributing
+## Contribution
 
 If you're interested in contributing to this project, please follow these steps:
-
 1.  Fork this repository.
 2.  Create a new branch for your feature or bug fix.
 3.  Make your changes and commit them to your branch.
