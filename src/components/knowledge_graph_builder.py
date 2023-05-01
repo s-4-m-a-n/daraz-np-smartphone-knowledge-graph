@@ -41,6 +41,7 @@ def run():
     logging.disable(logging.DEBUG)
     # establish connection to the database
     logging.info("establishing connection to neo4j")
+    logging.info(f"login url: {URL}, auth: {AUTH}")
     driver = utils.establish_db_connection(URL, AUTH)
     
     try:

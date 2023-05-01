@@ -18,7 +18,7 @@ def load_csv(file_path):
         return pd.read_csv(file_path)
 
 def establish_db_connection(url, auth):
-    return GraphDatabase.driver(url,auth=auth)
+    return GraphDatabase.driver(url,auth=auth, encrypted=False)
 
 
 def is_connected(driver):
@@ -26,4 +26,5 @@ def is_connected(driver):
     try:
         driver.verify_connectivity()
     except Exception as e:
+        print(e)
         raise CustomException("Unable to establish connection to the neo4j db", sys)
