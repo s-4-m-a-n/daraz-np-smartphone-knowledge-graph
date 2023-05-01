@@ -1,4 +1,7 @@
+
 # daraz-np-smartphone-knowledge-graph
+<img src="./notebooks/assets/Daraz-Symbol.png" alt="Logo" style="float:left;width:100px;"/>
+
 a python based knowledge graph project which consists of three main components, namely a scraper for daraz.np.com/smartphones, a transformer that transform the scrape data into a csv file, and a final component that is used to load the csv file into neo4j db.
 
 ## Table of Contents
@@ -7,6 +10,7 @@ a python based knowledge graph project which consists of three main components, 
 	- Prerequisites
 	- Installation
 - Usage
+- Project structure
 - Contribution
 - License
 
@@ -19,6 +23,7 @@ a python based knowledge graph project which consists of three main components, 
 You can check out other installed libraries in requirements.txt file.
 
 ## Getting Started
+
 ### Prerequisites
  To run this Dockerized project, you will need to have the following software and tools installed on your machine.
 
@@ -39,15 +44,17 @@ To get started with this project, follow these steps:
 	```bash
 	cd daraz-np-smartphone-knoledge-graph
 	```
-3. docker compose build
+3. create ".env" file
+	- you can simply copy the content from .env-temp file and add the credentials
+4. docker compose build
 	```bash
 	docker compose build
 	```
-4. docker compose up
+5. docker compose up
 	```bash
 	docker compose up
 	```
-5. get into cli-app bash to run the components
+6. get into cli-app container bash to run the components
 	- get the name of the running components  
 		```bash
 		docker ps
@@ -60,7 +67,9 @@ To get started with this project, follow these steps:
 		```bash
 		python CLI_app.py --components '["scraper", "transformer", "kg_builder"]'
 		```
-6. run neo4j-browser to perform queries
+		- It is not mandatory to add all three components, if you already have scraped data into the artifact/ directory, then you can simply ignore scraper components by specifying only the "transformer" and "kg_builder" component.
+		
+7. run neo4j-browser to perform queries
 	
 	>visit http://localhost:7474 
 
@@ -75,6 +84,38 @@ If you're interested in contributing to this project, please follow these steps:
 3.  Make your changes and commit them to your branch.
 4.  Submit a pull request to this repository.
 
+## Project structure
+The structure of the project is as shown below:
+ ```bash
+ |-notebook/
+ |-src/
+	 |-components/
+	 |-pipeline/
+	 |-__init__.py
+	 |-exceptions.py
+	 |-logger.py
+	 |-utils.py
+	 |-config.json
+|-CLI_app.py
+|-Dockerfile
+|-docker-compose.yml
+|-requirements.txt
+|-setup.py
+|-.env-temp
+|-archives.zip
+ ```
+ - **notebook/**
+	 - In the notebook directory you will file three notebooks, which explain the detail explanation (with code) of web scraping, building knowledge graph from networkx and neo4j.
+- **src/**
+	- this directory contains components and pipeline for scraping, transforming and loading graph into neo4j.
+- **CLI_app.py**
+	- it is a python script for executing pipeline components.
+- **.env-temp**
+	- make sure to create ".env" file and copy .env-temp and *add credentials* for neo4j db.
+- **archives.zip**
+	- sometime daraz detects our scraper (bot), and it will get blocked by the server, thus unable to scrape the data.For such case you can copy the "scraped_data.json" into a "artifacts/" directory before building the container.
+- **src/config.json**
+	- you can specify the name for artifact root directory and file name for each component's output.
 
 ## LICENSE:
 This project is licensed under the MIT License. See the [LICENSE](https://github.com/s-4-m-a-n/subscene-API/blob/master/LICENSE) file for details.
