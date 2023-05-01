@@ -61,7 +61,7 @@ To get started with this project, follow these steps:
 		```
 	- execute the bash inside running cli-app container
 		```
-		docker exec -it <container_hash> bash
+		docker exec -it cli_app bash
 		```
 	- run the pipeline inside bash
 		```bash
