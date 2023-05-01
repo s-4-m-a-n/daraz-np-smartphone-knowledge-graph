@@ -115,6 +115,6 @@ The structure of the project is as shown below:
 	- you can specify the name for artifact root directory and file name for each component's output.
 
 ## LICENSE:
-This project is licensed under the MIT License. See the [LICENSE](https://github.com/s-4-m-a-n/subscene-API/blob/master/LICENSE) file for details.
+This project is licensed under the MIT License. See the [LICENSE](https://github.com/s-4-m-a-n/daraz-np-smartphone-knowledge-graph/blob/main/LICENSE) file for details.
 [![Facebook](https://img.shields.io/static/v1.svg?label=follow&message=@me&color=9cf&logo=facebook&style=flat&logoColor=white&colorA=informational)](https://www.facebook.com/suman.dhakal.39982) [![Twitter](https://img.shields.io/static/v1.svg?label=follow&message=@&color=grey&logo=twitter&style=flat&logoColor=white&colorA=critical)](https://twitter.com/s_4_m_A_N)
 
