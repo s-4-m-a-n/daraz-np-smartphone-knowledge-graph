@@ -2,7 +2,7 @@ version: "3.0"
 
 services:   
   neo4j:
-    image: neo4j:3.5-community
+    image: neo4j:5.7.0-community
     container_name: neo4j_db
     ports:
       - "7474:7474"
