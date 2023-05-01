@@ -14,11 +14,13 @@ class PythonLiteralOption(click.Option):
 
 @click.command()
 # input format: --components '["val1", "val2", ..]'
-@click.option("--components", cls=PythonLiteralOption, default=[])
+@click.option("--components", cls=PythonLiteralOption, default='[]')
 
 def main(components):
-    KG_builder_pipeline.pipeline(components)
-
+    if components:
+        KG_builder_pipeline.pipeline(components)
+    else:
+        print("command to execute pipeline: docker compose run --rm cli_app --components '[\"kg_builder\"]'")
 
 
 if __name__ == "__main__":
